@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useData } from '../hooks/useData';
-import type { Ingredient } from '../data/ingredients';
-
+import { calculateIngredients } from '../utils/calculator';
 interface RecipeEntry {
   id: string; // 一意の入力枠ID
   recipeId: string;
@@ -39,44 +38,9 @@ export function Calculator() {
     if (validEntries.length > 0) setIsCalculated(true);
   };
 
-  // 合算計算ロジック
+  // 合算計算ロジック（別ファイルに分離した純粋関数を使用）
   const calculatedItems = useMemo(() => {
-    if (validEntries.length === 0) return [];
-
-    // ingredientId をキーにしてグラム数を合算するマップ
-    const sums = new Map<string, number>();
-
-    validEntries.forEach(entry => {
-      const recipe = recipes.find(r => r.id === entry.recipeId);
-      if (!recipe) return;
-
-      const ratio = entry.portions / recipe.basePortions;
-      recipe.ingredients.forEach(ri => {
-        const currentSum = sums.get(ri.ingredientId) || 0;
-        sums.set(ri.ingredientId, currentSum + (ri.amountG * ratio));
-      });
-    });
-
-    // マップから配列に変換し、Ingredient情報を付与
-    const result = Array.from(sums.entries()).map(([ingId, sumAmount]) => {
-      const ingIdString = String(ingId);
-      const ing = ingredients.find(i => String(i.id) === ingIdString);
-      return {
-        ...ing,
-        calculatedAmountG: Math.round(sumAmount * 10) / 10 // 小数点第1位まで
-      };
-    });
-
-    // 名前順などでソートしておくと見やすい（特別材料を上に）
-    result.sort((a, b) => {
-      if (!a || !b) return 0;
-      if (a.type !== b.type) return a.type === 'special' ? -1 : 1;
-      const nameA = a.name || '';
-      const nameB = b.name || '';
-      return nameA.localeCompare(nameB, 'ja');
-    });
-
-    return result as (Ingredient & { calculatedAmountG: number })[];
+    return calculateIngredients(validEntries, recipes, ingredients);
   }, [validEntries, recipes, ingredients]);
 
   const handleShare = async () => {
