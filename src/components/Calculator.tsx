@@ -42,7 +42,7 @@ export function Calculator() {
   // 合算計算ロジック
   const calculatedItems = useMemo(() => {
     if (validEntries.length === 0) return [];
-    
+
     // ingredientId をキーにしてグラム数を合算するマップ
     const sums = new Map<string, number>();
 
@@ -59,7 +59,8 @@ export function Calculator() {
 
     // マップから配列に変換し、Ingredient情報を付与
     const result = Array.from(sums.entries()).map(([ingId, sumAmount]) => {
-      const ing = ingredients.find(i => i.id === ingId);
+      const ingIdString = String(ingId);
+      const ing = ingredients.find(i => String(i.id) === ingIdString);
       return {
         ...ing,
         calculatedAmountG: Math.round(sumAmount * 10) / 10 // 小数点第1位まで
@@ -88,7 +89,7 @@ export function Calculator() {
     }).filter(Boolean).join(', ');
 
     let text = `【材料合算リスト】\n対象: ${recipeNames}\n\n`;
-    
+
     calculatedItems.forEach(item => {
       text += `・${item.type === 'special' ? '★ ' : ''}${item.name}: ${item.calculatedAmountG}g\n`;
       if (item.packageInfo) text += `  📦 ${item.packageInfo}\n`;
@@ -115,15 +116,15 @@ export function Calculator() {
   return (
     <div>
       <h2 className="text-lg font-bold mb-md">複数レシピ合算計算</h2>
-      
+
       <div className="card mb-md">
         {entries.map((entry, index) => (
           <div key={entry.id} className="mb-md" style={{ borderBottom: index < entries.length - 1 ? '1px solid var(--color-border)' : 'none', paddingBottom: index < entries.length - 1 ? 'var(--spacing-md)' : 0 }}>
             <div className="flex justify-between items-center mb-sm">
               <span className="font-bold">レシピ {index + 1}</span>
               {entries.length > 1 && (
-                <button 
-                  className="btn btn-secondary text-xs" 
+                <button
+                  className="btn btn-secondary text-xs"
                   onClick={() => handleRemoveEntry(entry.id)}
                   style={{ padding: '0.25rem 0.5rem' }}
                 >
@@ -133,9 +134,9 @@ export function Calculator() {
             </div>
 
             <div className="form-group mb-sm">
-              <select 
-                className="input-base" 
-                value={entry.recipeId} 
+              <select
+                className="input-base"
+                value={entry.recipeId}
                 onChange={(e) => handleChangeEntry(entry.id, 'recipeId', e.target.value)}
                 style={{ marginBottom: 0 }}
               >
@@ -145,19 +146,19 @@ export function Calculator() {
                 ))}
               </select>
             </div>
-            
+
             <div className="flex gap-sm items-center">
               <span className="text-sm text-sub">人数・分量:</span>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 style={{ padding: '0.25rem 0.75rem' }}
                 onClick={() => handleChangeEntry(entry.id, 'portions', Math.max(1, entry.portions - 1))}
               >-</button>
               <span className="font-bold text-lg" style={{ width: '40px', textAlign: 'center' }}>
                 {entry.portions}
               </span>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 style={{ padding: '0.25rem 0.75rem' }}
                 onClick={() => handleChangeEntry(entry.id, 'portions', entry.portions + 1)}
               >+</button>
@@ -165,16 +166,16 @@ export function Calculator() {
           </div>
         ))}
 
-        <button 
-          className="btn btn-secondary btn-block mb-md" 
+        <button
+          className="btn btn-secondary btn-block mb-md"
           onClick={handleAddEntry}
           disabled={hasEmptyEntry}
         >
           ＋ 別のレシピを追加
         </button>
 
-        <button 
-          className="btn btn-primary btn-block" 
+        <button
+          className="btn btn-primary btn-block"
           onClick={handleCalculate}
           disabled={validEntries.length === 0}
         >
@@ -184,17 +185,17 @@ export function Calculator() {
 
       {isCalculated && validEntries.length > 0 && (
         <div>
-          <div className="flex justify-between items-center mb-sm">
+          <div className="flex justify-between items-center mb-md">
             <h3 className="font-bold text-lg">必要な全材料（合算）</h3>
             <button className="btn btn-secondary text-xs" onClick={handleShare}>
               {typeof navigator.share === 'function' ? '共有する' : 'コピーする'}
             </button>
           </div>
-          
+
           <div className="flex-col gap-sm">
             {calculatedItems.map((item, idx) => {
               const isSpecial = item.type === 'special';
-              
+
               return (
                 <div key={idx} className={`card ${isSpecial ? 'special-card' : ''}`} style={{ marginBottom: 0 }}>
                   <div className="flex justify-between items-center mb-xs">
@@ -206,13 +207,13 @@ export function Calculator() {
                       {item.calculatedAmountG} <span className="text-sm">g</span>
                     </span>
                   </div>
-                  
+
                   {item.packageInfo && (
                     <div className="text-sm text-sub mt-xs">
                       📦 パッケージ情報: {item.packageInfo}
                     </div>
                   )}
-                  
+
                   {item.notes && (
                     <div className="text-sm mt-xs">
                       <span className="badge badge-warning">注意</span> {item.notes}

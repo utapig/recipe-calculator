@@ -5,7 +5,7 @@ import type { Recipe, RecipeIngredient } from '../hooks/useData';
 export function RecipeMaster() {
   const { recipes, saveRecipes, ingredients } = useData();
   const [isAdding, setIsAdding] = useState(false);
-  
+
   // フォームステート
   const [name, setName] = useState('');
   const [basePortions, setBasePortions] = useState(1);
@@ -69,16 +69,16 @@ export function RecipeMaster() {
       {isAdding && (
         <form onSubmit={handleSaveRecipe} className="card special-card mb-md">
           <h3 className="font-bold mb-md">新しいレシピを作成</h3>
-          
+
           <div className="form-group">
             <label className="form-label">レシピ名</label>
-            <input 
-              type="text" 
-              className="input-base" 
-              value={name} 
-              onChange={e => setName(e.target.value)} 
+            <input
+              type="text"
+              className="input-base"
+              value={name}
+              onChange={e => setName(e.target.value)}
               placeholder="例: レアチーズケーキ"
-              required 
+              required
             />
           </div>
 
@@ -95,10 +95,10 @@ export function RecipeMaster() {
             <label className="form-label">必要な材料</label>
             {recipeIngredients.map((ri, idx) => (
               <div key={idx} className="flex gap-sm mb-sm items-center">
-                <select 
-                  className="input-base" 
+                <select
+                  className="input-base"
                   style={{ flex: 2, marginBottom: 0 }}
-                  value={ri.ingredientId} 
+                  value={ri.ingredientId}
                   onChange={e => handleIngredientChange(idx, 'ingredientId', e.target.value)}
                   required
                 >
@@ -109,20 +109,20 @@ export function RecipeMaster() {
                     </option>
                   ))}
                 </select>
-                
+
                 <div style={{ flex: 1, position: 'relative' }}>
-                  <input 
-                    type="number" 
-                    className="input-base" 
+                  <input
+                    type="number"
+                    className="input-base"
                     style={{ marginBottom: 0 }}
-                    value={ri.amountG || ''} 
+                    value={ri.amountG || ''}
                     onChange={e => handleIngredientChange(idx, 'amountG', Number(e.target.value))}
                     placeholder="g"
                     min="1"
                     required
                   />
                 </div>
-                
+
                 <button type="button" className="btn btn-secondary text-xs" onClick={() => handleRemoveIngredient(idx)}>
                   ✕
                 </button>
@@ -138,7 +138,7 @@ export function RecipeMaster() {
         </form>
       )}
 
-      <div className="flex-col gap-sm">
+      <div className="flex-col gap-xs">
         {recipes.map(r => (
           <div key={r.id} className="card">
             <div className="flex justify-between items-center mb-sm">
@@ -148,16 +148,17 @@ export function RecipeMaster() {
               </button>
             </div>
             <div className="text-sm text-sub mb-sm">基準: {r.basePortions} 人分 / 材料: {r.ingredients.length} 種類</div>
-            
+
             <div style={{ background: 'var(--color-background)', padding: 'var(--spacing-sm)', borderRadius: 'var(--radius-sm)' }}>
               {r.ingredients.map((ri, idx) => {
-                const ing = ingredients.find(i => i.id === ri.ingredientId);
-                return (
-                  <div key={idx} className="text-sm flex justify-between border-b" style={{ borderBottomColor: 'var(--color-border)', paddingBottom: '4px', marginBottom: '4px' }}>
-                    <span>{ing ? (ing.type === 'special' ? '★ ' : '') + ing.name : 'Unknown'}</span>
-                    <span className="font-bold">{ri.amountG}g</span>
-                  </div>
-                );
+                      const ingIdString = String(ri.ingredientId);
+                      const ing = ingredients.find(i => String(i.id) === ingIdString);
+                      return (
+                        <div key={idx} className="text-sm flex justify-between border-b" style={{ borderBottomColor: 'var(--color-border)', paddingBottom: '4px', marginBottom: '4px' }}>
+                          <span>{ing ? (ing.type === 'special' ? '★ ' : '') + ing.name : 'Unknown（ID: ' + ri.ingredientId + '）'}</span>
+                          <span className="font-bold">{ri.amountG}g</span>
+                        </div>
+                      );
               })}
             </div>
           </div>
