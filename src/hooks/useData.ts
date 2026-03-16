@@ -25,7 +25,18 @@ export function useData() {
   useEffect(() => {
     const storedIngredients = localStorage.getItem(STORAGE_KEY_INGREDIENTS);
     if (storedIngredients) {
-      setIngredients(JSON.parse(storedIngredients));
+      const parsed = JSON.parse(storedIngredients) as Ingredient[];
+      // 初期データが増えている場合、新しいものを追加（ID重複チェック）
+      const newIngredients = INITIAL_INGREDIENTS.filter(
+        initialIng => !parsed.some(storedIng => storedIng.id === initialIng.id)
+      );
+      if (newIngredients.length > 0) {
+        const merged = [...parsed, ...newIngredients];
+        setIngredients(merged);
+        localStorage.setItem(STORAGE_KEY_INGREDIENTS, JSON.stringify(merged));
+      } else {
+        setIngredients(parsed);
+      }
     } else {
       // 初回起動時はINITIAL_INGREDIENTSをセット
       setIngredients(INITIAL_INGREDIENTS);
