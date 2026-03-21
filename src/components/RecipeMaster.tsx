@@ -138,30 +138,29 @@ export function RecipeMaster() {
         </form>
       )}
 
-      <div className="flex-col gap-xs">
+      <div className="recipe-list">
         {recipes.map(r => (
-          <div key={r.id} className="card">
-            <div className="flex justify-between items-center mb-sm">
-              <h3 className="font-bold text-lg">{r.name}</h3>
-              <button className="btn btn-secondary text-xs" onClick={() => handleDelete(r.id)} style={{ padding: '0.25rem 0.5rem' }}>
-                削除
-              </button>
-            </div>
-            <div className="text-sm text-sub mb-sm">基準: {r.basePortions} 人分 / 材料: {r.ingredients.length} 種類</div>
-
-            <div style={{ background: 'var(--color-background)', padding: 'var(--spacing-sm)', borderRadius: 'var(--radius-sm)' }}>
+          <details key={r.id} className="recipe-item">
+            <summary className="recipe-item-summary">
+              <span className="recipe-item-name">{r.name}</span>
+              <span className="recipe-item-meta text-sm text-sub">
+                {r.basePortions}人分 / {r.ingredients.length}材料
+              </span>
+              <button className="btn-icon-delete" onClick={(e) => { e.preventDefault(); handleDelete(r.id); }} title="削除">✕</button>
+            </summary>
+            <div className="recipe-item-detail">
               {r.ingredients.map((ri, idx) => {
-                      const ingIdString = String(ri.ingredientId);
-                      const ing = ingredients.find(i => String(i.id) === ingIdString);
-                      return (
-                        <div key={idx} className="text-sm flex justify-between border-b" style={{ borderBottomColor: 'var(--color-border)', paddingBottom: '4px', marginBottom: '4px' }}>
-                          <span>{ing ? (ing.type === 'special' ? '★ ' : '') + ing.name : 'Unknown（ID: ' + ri.ingredientId + '）'}</span>
-                          <span className="font-bold">{ri.amountG}g</span>
-                        </div>
-                      );
+                const ingIdString = String(ri.ingredientId);
+                const ing = ingredients.find(i => String(i.id) === ingIdString);
+                return (
+                  <div key={idx} className="recipe-ing-row">
+                    <span>{ing ? (ing.type === 'special' ? '★ ' : '') + ing.name : 'Unknown（ID: ' + ri.ingredientId + '）'}</span>
+                    <span className="font-bold">{ri.amountG}g</span>
+                  </div>
+                );
               })}
             </div>
-          </div>
+          </details>
         ))}
 
         {recipes.length === 0 && !isAdding && (

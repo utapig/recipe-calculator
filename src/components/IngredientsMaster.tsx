@@ -114,32 +114,32 @@ export function IngredientsMaster() {
         />
       </div>
 
-      <div className="flex-col gap-xs">
+      <div className="ingredient-table">
+        <div className="ingredient-table-header">
+          <span className="ingredient-col-name">材料名</span>
+          <span className="ingredient-col-info">備考</span>
+          <span className="ingredient-col-action"></span>
+        </div>
         {filteredIngredients.map(ing => (
-          <div key={ing.id} className={`card ${ing.type === 'special' ? 'special-card' : ''}`}>
-            <div className="flex justify-between items-center mb-xs">
-              <span className="font-bold">
-                {ing.type === 'special' && '★ '}
-                {ing.name}
-              </span>
+          <div key={ing.id} className={`ingredient-row ${ing.type === 'special' ? 'ingredient-row-special' : ''}`}>
+            <span className="ingredient-col-name">
+              {ing.type === 'special' && <span style={{ color: 'var(--color-special-text)' }}>★ </span>}
+              {ing.name}
+            </span>
+            <span className="ingredient-col-info text-sm text-sub">
+              {ing.packageInfo && <span>📦{ing.packageInfo}</span>}
+              {ing.packageInfo && ing.notes && ' / '}
+              {ing.notes && <span>⚠{ing.notes}</span>}
+            </span>
+            <span className="ingredient-col-action">
               <button
-                className="btn btn-secondary text-xs"
+                className="btn-icon-delete"
                 onClick={() => handleDelete(ing.id)}
-                style={{ padding: '0.25rem 0.5rem' }}
+                title="削除"
               >
-                削除
+                ✕
               </button>
-            </div>
-
-            {ing.packageInfo && (
-              <div className="text-sm text-sub">📦 {ing.packageInfo}</div>
-            )}
-
-            {ing.notes && (
-              <div className="text-sm text-sub mt-xs">
-                <span className="badge badge-warning">注意</span> {ing.notes}
-              </div>
-            )}
+            </span>
           </div>
         ))}
 

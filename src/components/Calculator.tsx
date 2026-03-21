@@ -79,110 +79,101 @@ export function Calculator() {
 
   return (
     <div>
-      <h2 className="text-lg font-bold mb-md">複数レシピ合算計算</h2>
+      <h2 className="text-sm font-bold mb-sm">複数レシピ合算計算</h2>
 
-      <div className="card mb-md">
+      <div className="card" style={{ padding: 'var(--spacing-sm)' }}>
         {entries.map((entry, index) => (
-          <div key={entry.id} className="mb-md" style={{ borderBottom: index < entries.length - 1 ? '1px solid var(--color-border)' : 'none', paddingBottom: index < entries.length - 1 ? 'var(--spacing-md)' : 0 }}>
-            <div className="flex justify-between items-center mb-sm">
-              <span className="font-bold">レシピ {index + 1}</span>
-              {entries.length > 1 && (
-                <button
-                  className="btn btn-secondary text-xs"
-                  onClick={() => handleRemoveEntry(entry.id)}
-                  style={{ padding: '0.25rem 0.5rem' }}
-                >
-                  削除
-                </button>
-              )}
-            </div>
-
-            <div className="form-group mb-sm">
+          <div key={entry.id} className="calc-entry-row" style={{ borderBottom: index < entries.length - 1 ? '1px solid var(--color-border)' : 'none', paddingBottom: index < entries.length - 1 ? '0.4rem' : 0, marginBottom: index < entries.length - 1 ? '0.4rem' : 0 }}>
+            <div className="flex gap-sm items-center" style={{ marginBottom: '0.25rem' }}>
+              <span className="text-xs text-sub" style={{ minWidth: '1.5rem' }}>#{index + 1}</span>
               <select
                 className="input-base"
                 value={entry.recipeId}
                 onChange={(e) => handleChangeEntry(entry.id, 'recipeId', e.target.value)}
-                style={{ marginBottom: 0 }}
+                style={{ marginBottom: 0, fontSize: '0.8rem', padding: '0.25rem 0.35rem' }}
               >
-                <option value="">-- レシピを選択してください --</option>
+                <option value="">-- レシピを選択 --</option>
                 {recipes.map(r => (
-                  <option key={r.id} value={r.id}>{r.name} (基準 {r.basePortions})</option>
+                  <option key={r.id} value={r.id}>{r.name} ({r.basePortions})</option>
                 ))}
               </select>
-            </div>
-
-            <div className="flex gap-sm items-center">
-              <span className="text-sm text-sub">人数・分量:</span>
-              <button
-                className="btn btn-secondary"
-                style={{ padding: '0.25rem 0.75rem' }}
-                onClick={() => handleChangeEntry(entry.id, 'portions', Math.max(1, entry.portions - 1))}
-              >-</button>
-              <span className="font-bold text-lg" style={{ width: '40px', textAlign: 'center' }}>
-                {entry.portions}
-              </span>
-              <button
-                className="btn btn-secondary"
-                style={{ padding: '0.25rem 0.75rem' }}
-                onClick={() => handleChangeEntry(entry.id, 'portions', entry.portions + 1)}
-              >+</button>
+              <div className="flex items-center gap-sm" style={{ flexShrink: 0 }}>
+                <button
+                  className="btn btn-secondary"
+                  style={{ padding: '0.15rem 0.5rem', fontSize: '0.8rem' }}
+                  onClick={() => handleChangeEntry(entry.id, 'portions', Math.max(1, entry.portions - 1))}
+                >-</button>
+                <span className="font-bold" style={{ width: '28px', textAlign: 'center', fontSize: '0.9rem' }}>
+                  {entry.portions}
+                </span>
+                <button
+                  className="btn btn-secondary"
+                  style={{ padding: '0.15rem 0.5rem', fontSize: '0.8rem' }}
+                  onClick={() => handleChangeEntry(entry.id, 'portions', entry.portions + 1)}
+                >+</button>
+              </div>
+              {entries.length > 1 && (
+                <button
+                  className="btn-icon-delete"
+                  onClick={() => handleRemoveEntry(entry.id)}
+                  title="削除"
+                >✕</button>
+              )}
             </div>
           </div>
         ))}
 
-        <button
-          className="btn btn-secondary btn-block mb-md"
-          onClick={handleAddEntry}
-          disabled={hasEmptyEntry}
-        >
-          ＋ 別のレシピを追加
-        </button>
-
-        <button
-          className="btn btn-primary btn-block"
-          onClick={handleCalculate}
-          disabled={validEntries.length === 0}
-        >
-          合算して計算する
-        </button>
+        <div className="flex gap-sm" style={{ marginTop: '0.4rem' }}>
+          <button
+            className="btn btn-secondary"
+            style={{ flex: 1, padding: '0.3rem', fontSize: '0.8rem' }}
+            onClick={handleAddEntry}
+            disabled={hasEmptyEntry}
+          >
+            ＋ 追加
+          </button>
+          <button
+            className="btn btn-primary"
+            style={{ flex: 1, padding: '0.3rem', fontSize: '0.8rem' }}
+            onClick={handleCalculate}
+            disabled={validEntries.length === 0}
+          >
+            合算計算
+          </button>
+        </div>
       </div>
 
       {isCalculated && validEntries.length > 0 && (
         <div>
-          <div className="flex justify-between items-center mb-md">
-            <h3 className="font-bold text-lg">必要な全材料（合算）</h3>
-            <button className="btn btn-secondary text-xs" onClick={handleShare}>
-              {typeof navigator.share === 'function' ? '共有する' : 'コピーする'}
+          <div className="flex justify-between items-center mb-sm">
+            <h3 className="font-bold text-sm">必要な全材料（合算）</h3>
+            <button className="btn btn-secondary text-xs" onClick={handleShare} style={{ padding: '0.2rem 0.5rem' }}>
+              {typeof navigator.share === 'function' ? '共有' : 'コピー'}
             </button>
           </div>
 
-          <div className="flex-col gap-sm">
+          <div className="ingredient-table">
+            <div className="ingredient-table-header">
+              <span className="calc-col-name">材料名</span>
+              <span className="calc-col-amount">分量</span>
+              <span className="calc-col-info">備考</span>
+            </div>
             {calculatedItems.map((item, idx) => {
               const isSpecial = item.type === 'special';
-
               return (
-                <div key={idx} className={`card ${isSpecial ? 'special-card' : ''}`} style={{ marginBottom: 0 }}>
-                  <div className="flex justify-between items-center mb-xs">
-                    <span className="font-bold text-lg">
-                      {isSpecial && '★ '}
-                      {item.name}
-                    </span>
-                    <span className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>
-                      {item.calculatedAmountG} <span className="text-sm">g</span>
-                    </span>
-                  </div>
-
-                  {item.packageInfo && (
-                    <div className="text-sm text-sub mt-xs">
-                      📦 パッケージ情報: {item.packageInfo}
-                    </div>
-                  )}
-
-                  {item.notes && (
-                    <div className="text-sm mt-xs">
-                      <span className="badge badge-warning">注意</span> {item.notes}
-                    </div>
-                  )}
+                <div key={idx} className={`ingredient-row ${isSpecial ? 'ingredient-row-special' : ''}`}>
+                  <span className="calc-col-name">
+                    {isSpecial && <span style={{ color: 'var(--color-special-text)' }}>★ </span>}
+                    {item.name}
+                  </span>
+                  <span className="calc-col-amount font-bold" style={{ color: 'var(--color-primary)' }}>
+                    {item.calculatedAmountG}g
+                  </span>
+                  <span className="calc-col-info text-sm text-sub">
+                    {item.packageInfo && <span>📦{item.packageInfo}</span>}
+                    {item.packageInfo && item.notes && ' / '}
+                    {item.notes && <span>⚠{item.notes}</span>}
+                  </span>
                 </div>
               );
             })}
