@@ -82,7 +82,7 @@ describe('calculateIngredients', () => {
     expect(result.find(i => i.id === '4')?.calculatedAmountG).toBe(80);
   });
 
-  it('特別材料（special）が配列の先頭に来るようにソートされる', () => {
+  it('specialを含めて材料名の五十音順でソートされる', () => {
     const entries = [
       { recipeId: 'r1', portions: 1 }, // normal (1, 2, 3)
       { recipeId: 'r2', portions: 5 }, // normal (1), special (4)
@@ -91,9 +91,7 @@ describe('calculateIngredients', () => {
 
     // 要素数は4（ing 1,2,3,4）
     expect(result).toHaveLength(4);
-    // 先頭は必ず special
-    expect(result[0].type).toBe('special');
-    expect(result[0].id).toBe('4');
+    expect(result.map(i => i.name)).toEqual(['グラニュー糖', '小麦粉', '特別いちご', '卵']);
   });
 
   it('未知の材料IDが含まれている場合、Unknownとして扱われ処理が落ちない', () => {

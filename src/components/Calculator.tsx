@@ -157,23 +157,24 @@ export function Calculator() {
             <div className="ingredient-table-header">
               <span className="calc-col-name">材料名</span>
               <span className="calc-col-amount">分量</span>
-              <span className="calc-col-info">備考</span>
             </div>
             {calculatedItems.map((item, idx) => {
               const isSpecial = item.type === 'special';
+              const noteText = [
+                item.packageInfo ? `📦${item.packageInfo}` : '',
+                item.notes ? `⚠${item.notes}` : ''
+              ].filter(Boolean).join(' / ');
               return (
-                <div key={idx} className={`ingredient-row ${isSpecial ? 'ingredient-row-special' : ''}`}>
-                  <span className="calc-col-name">
-                    {isSpecial && <span style={{ color: 'var(--color-special-text)' }}>★ </span>}
-                    {item.name}
-                  </span>
+                <div key={idx} className={`ingredient-row calc-result-row ${isSpecial ? 'ingredient-row-special' : ''}`}>
+                  <div className="calc-col-name">
+                    <div>
+                      {isSpecial && <span style={{ color: 'var(--color-special-text)' }}>★ </span>}
+                      {item.name}
+                    </div>
+                    {noteText && <div className="calc-col-note text-xs text-sub">{noteText}</div>}
+                  </div>
                   <span className="calc-col-amount font-bold" style={{ color: 'var(--color-primary)' }}>
                     {item.calculatedAmountG}g
-                  </span>
-                  <span className="calc-col-info text-sm text-sub">
-                    {item.packageInfo && <span>📦{item.packageInfo}</span>}
-                    {item.packageInfo && item.notes && ' / '}
-                    {item.notes && <span>⚠{item.notes}</span>}
                   </span>
                 </div>
               );

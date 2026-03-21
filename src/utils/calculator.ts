@@ -39,7 +39,6 @@ export function calculateIngredients(
 
   result.sort((a, b) => {
     if (!a || !b) return 0;
-    if (a.type !== b.type) return a.type === 'special' ? -1 : 1;
     const nameA = a.name || '';
     const nameB = b.name || '';
     return nameA.localeCompare(nameB, 'ja');
