@@ -144,7 +144,7 @@ export function RecipeMaster() {
             <summary className="recipe-item-summary">
               <span className="recipe-item-name">{r.name}</span>
               <span className="recipe-item-meta text-sm text-sub">
-                {r.basePortions}人分 / {r.ingredients.length}材料
+                {r.ingredients.length}材料
               </span>
               <button className="btn-icon-delete" onClick={(e) => { e.preventDefault(); handleDelete(r.id); }} title="削除">✕</button>
             </summary>

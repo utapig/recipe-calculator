@@ -25,38 +25,31 @@ export function useData() {
   // ロード処理
   useEffect(() => {
     // --- 材料ロード ---
+    // 戦略: INITIALデータのIDは常にINITIALの内容で上書き。ユーザーが追加した項目（INITIALにないID）のみ保持。
     const storedIngredients = localStorage.getItem(STORAGE_KEY_INGREDIENTS);
     if (storedIngredients) {
       const parsed = JSON.parse(storedIngredients) as Ingredient[];
-      const newIngredients = INITIAL_INGREDIENTS.filter(
-        initialIng => !parsed.some(storedIng => storedIng.id === initialIng.id)
-      );
-      if (newIngredients.length > 0) {
-        const merged = [...parsed, ...newIngredients];
-        setIngredients(merged);
-        localStorage.setItem(STORAGE_KEY_INGREDIENTS, JSON.stringify(merged));
-      } else {
-        setIngredients(parsed);
-      }
+      const initialIds = new Set(INITIAL_INGREDIENTS.map(i => i.id));
+      // ユーザー追加分（INITIALにないID）だけ残す
+      const userAdded = parsed.filter(i => !initialIds.has(i.id));
+      const merged = [...INITIAL_INGREDIENTS, ...userAdded];
+      setIngredients(merged);
+      localStorage.setItem(STORAGE_KEY_INGREDIENTS, JSON.stringify(merged));
     } else {
       setIngredients(INITIAL_INGREDIENTS);
       localStorage.setItem(STORAGE_KEY_INGREDIENTS, JSON.stringify(INITIAL_INGREDIENTS));
     }
 
-    // --- レシピロード（材料と同じマージ方式） ---
+    // --- レシピロード（同様の戦略） ---
     const storedRecipes = localStorage.getItem(STORAGE_KEY_RECIPES);
     if (storedRecipes) {
       const parsed = JSON.parse(storedRecipes) as Recipe[];
-      const newRecipes = INITIAL_RECIPES.filter(
-        initialRec => !parsed.some(storedRec => storedRec.id === initialRec.id)
-      );
-      if (newRecipes.length > 0) {
-        const merged = [...parsed, ...newRecipes];
-        setRecipes(merged);
-        localStorage.setItem(STORAGE_KEY_RECIPES, JSON.stringify(merged));
-      } else {
-        setRecipes(parsed);
-      }
+      const initialIds = new Set(INITIAL_RECIPES.map(r => r.id));
+      // ユーザー追加分（INITIALにないID）だけ残す
+      const userAdded = parsed.filter(r => !initialIds.has(r.id));
+      const merged = [...INITIAL_RECIPES, ...userAdded];
+      setRecipes(merged);
+      localStorage.setItem(STORAGE_KEY_RECIPES, JSON.stringify(merged));
     } else {
       setRecipes(INITIAL_RECIPES);
       localStorage.setItem(STORAGE_KEY_RECIPES, JSON.stringify(INITIAL_RECIPES));
