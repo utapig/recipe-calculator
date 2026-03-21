@@ -193,4 +193,101 @@ export const INITIAL_RECIPES: Recipe[] = [
             { ingredientId: '144', amountG: 2000 },
         ],
     },
+    // --- ここから追加レシピ ---
+    {
+        id: 'mousse_peche_13',
+        name: '￥13ムースペシェ',
+        basePortions: 100,
+        ingredients: [
+            { ingredientId: '69', amountG: 400 }, // ホワイトピーチピューレ（ﾌﾙﾃｨｴ）
+            { ingredientId: '68', amountG: 314 }, // ブラットピーチピューレ（ﾌﾙﾃｨｴ）
+            { ingredientId: '140', amountG: 22.3 }, // 板ゼラチンゴールド
+            { ingredientId: '8', amountG: 69 }, // 卵白
+            { ingredientId: '1', amountG: 138 }, // グラニュー糖
+            { ingredientId: '143', amountG: 543 }, // 35%
+        ],
+    },
+    {
+        id: 'aka_momo_sauce_13',
+        name: '￥13赤桃ソース',
+        basePortions: 100,
+        ingredients: [
+            { ingredientId: '68', amountG: 245 }, // ブラッドピーチピューレ（ﾌﾙﾃｨｴ）
+            { ingredientId: '74', amountG: 70 }, // フランボワーズピューレ
+            { ingredientId: '1', amountG: 13 }, // グラニュー糖
+            { ingredientId: '12', amountG: 3.8 }, // ペクチン
+        ],
+    },
+    {
+        id: 'pingre_granite_13',
+        name: '￥13ピングレグラニテ',
+        basePortions: 100,
+        ingredients: [
+            { ingredientId: '186', amountG: 1000 }, // ピングレジュース（ｳｪﾙﾁ）
+            { ingredientId: '1', amountG: 120 }, // グラニュー糖
+            { ingredientId: '11', amountG: 20 }, // イナアガーF
+            { ingredientId: '70', amountG: 20 }, // フランボワーズブリゼ
+        ],
+    },
+    {
+        id: 'matcha_mousse_19',
+        name: '￥19抹茶ムース/ホテルパン1枚104名',
+        basePortions: 104,
+        ingredients: [
+            { ingredientId: '141', amountG: 104 }, // 牛乳
+            { ingredientId: '140', amountG: 13 }, // 板ゼラチンゴールド
+            { ingredientId: '97', amountG: 15 }, // 抹茶パウダー
+            { ingredientId: '19', amountG: 182 }, // キャラットホワイト
+            { ingredientId: '143', amountG: 271 }, // 35%
+        ],
+    },
+    {
+        id: 'framboise_mousse_19',
+        name: '￥19フランボワーズムース/ホテルパン1枚104名',
+        basePortions: 104,
+        ingredients: [
+            { ingredientId: '74', amountG: 273 }, // フランボワーズピューレ
+            { ingredientId: '1', amountG: 49 }, // グラニュー糖
+            { ingredientId: '140', amountG: 14 }, // 板ゼラチンゴールド
+            { ingredientId: '143', amountG: 238 }, // 35%
+        ],
+    },
+    {
+        id: 'apricot_mousse_19',
+        name: '￥19アプリコットムース/ホテルパン1枚104名',
+        basePortions: 104,
+        ingredients: [
+            { ingredientId: '98', amountG: 193 }, // アプリコットピューレ
+            { ingredientId: '1', amountG: 65 }, // グラニュー糖
+            { ingredientId: '140', amountG: 14 }, // 板ゼラチンゴールド
+            { ingredientId: '143', amountG: 230 }, // 35%
+            { ingredientId: '99', amountG: 74 }, // トックアプリコット
+            { ingredientId: '20', amountG: 9 }, // プルコレモン
+        ],
+    },
+    {
+        id: 'azuki_mousse_19',
+        name: '￥19小豆ムース/ホテルパン1枚104名',
+        basePortions: 104,
+        ingredients: [
+            { ingredientId: '141', amountG: 166 }, // 牛乳
+            { ingredientId: '1', amountG: 16 }, // グラニュー糖
+            { ingredientId: '9', amountG: 32 }, // 卵黄
+            { ingredientId: '140', amountG: 12 }, // 板ゼラチンゴールド
+            { ingredientId: '143', amountG: 166 }, // 35%
+            { ingredientId: '100', amountG: 190 }, // 粒餡
+        ],
+    },
+    {
+        id: 'strawberry_mousse_19',
+        name: '￥19ストロベリームース/ホテルパン1枚104名',
+        basePortions: 104,
+        ingredients: [
+            { ingredientId: '101', amountG: 242 }, // フレーズピューレ
+            { ingredientId: '1', amountG: 35 }, // グラニュー糖
+            { ingredientId: '140', amountG: 13 }, // 板ゼラチンゴールド
+            { ingredientId: '143', amountG: 295 }, // 35%
+        ],
+    },
+    // ...（続きのレシピも同様に追加可能）
 ];
