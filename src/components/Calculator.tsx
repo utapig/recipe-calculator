@@ -13,6 +13,7 @@ export function Calculator() {
     { id: Date.now().toString(), recipeId: '', portions: 1 }
   ]);
   const [isCalculated, setIsCalculated] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
 
   const handleAddEntry = () => {
     setEntries([...entries, { id: Date.now().toString(), recipeId: '', portions: 1 }]);
@@ -43,7 +44,7 @@ export function Calculator() {
     return calculateIngredients(validEntries, recipes, ingredients);
   }, [validEntries, recipes, ingredients]);
 
-  const handleShare = async () => {
+  const handleCopyText = async () => {
     if (validEntries.length === 0) return;
 
     // ヘッダーテキストの作成
@@ -61,17 +62,13 @@ export function Calculator() {
     });
 
     try {
-      if (typeof navigator.share === 'function') {
-        await navigator.share({
-          title: '材料合算リスト',
-          text: text,
-        });
-      } else {
-        await navigator.clipboard.writeText(text);
-        alert('クリップボードにコピーしました');
-      }
+      await navigator.clipboard.writeText(text);
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 1800);
     } catch (err) {
-      console.error('Error sharing', err);
+      console.error('Error copying text', err);
+      setCopyStatus('error');
+      setTimeout(() => setCopyStatus('idle'), 1800);
     }
   };
 
@@ -147,9 +144,13 @@ export function Calculator() {
         <div>
           <div className="flex justify-between items-center mb-sm">
             <h3 className="font-bold text-sm">必要な全材料（合算）</h3>
-            <button className="btn btn-secondary text-xs" onClick={handleShare} style={{ padding: '0.2rem 0.5rem' }}>
-              {typeof navigator.share === 'function' ? '共有' : 'コピー'}
-            </button>
+            <div className="flex items-center gap-sm">
+              {copyStatus === 'copied' && <span className="text-xs text-sub">コピーしました</span>}
+              {copyStatus === 'error' && <span className="text-xs text-sub">コピーに失敗しました</span>}
+              <button className="btn btn-secondary text-xs" onClick={handleCopyText} style={{ padding: '0.2rem 0.5rem', margin: '0.15rem 0' }}>
+                テキストをコピー
+              </button>
+            </div>
           </div>
 
           <div className="ingredient-table">
