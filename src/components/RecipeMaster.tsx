@@ -4,12 +4,28 @@ import type { Recipe, RecipeIngredient } from '../hooks/useData';
 
 export function RecipeMaster() {
   const { recipes, saveRecipes, ingredients } = useData();
+  const [searchTerm, setSearchTerm] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
   // フォームステート
   const [name, setName] = useState('');
   const [basePortions, setBasePortions] = useState(1);
   const [recipeIngredients, setRecipeIngredients] = useState<RecipeIngredient[]>([]);
+
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const filteredRecipes = recipes.filter(recipe => {
+    if (!normalizedSearchTerm) {
+      return true;
+    }
+
+    const matchesRecipeName = recipe.name.toLowerCase().includes(normalizedSearchTerm);
+    const matchesIngredientName = recipe.ingredients.some(recipeIngredient => {
+      const ingredient = ingredients.find(i => String(i.id) === String(recipeIngredient.ingredientId));
+      return ingredient?.name.toLowerCase().includes(normalizedSearchTerm);
+    });
+
+    return matchesRecipeName || matchesIngredientName;
+  });
 
   const handleAddIngredient = () => {
     setRecipeIngredients([...recipeIngredients, { ingredientId: '', amountG: 0 }]);
@@ -138,8 +154,18 @@ export function RecipeMaster() {
         </form>
       )}
 
+      <div className="form-group">
+        <input
+          type="text"
+          className="input-base"
+          placeholder="レシピを検索..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="recipe-list">
-        {recipes.map(r => (
+        {filteredRecipes.map(r => (
           <details key={r.id} className="recipe-item">
             <summary className="recipe-item-summary">
               <span className="recipe-item-name">{r.name}</span>
@@ -165,6 +191,10 @@ export function RecipeMaster() {
 
         {recipes.length === 0 && !isAdding && (
           <div className="text-center text-sub mt-md">レシピがありません。新しいレシピを追加してください。</div>
+        )}
+
+        {recipes.length > 0 && filteredRecipes.length === 0 && (
+          <div className="text-center text-sub mt-md">該当するレシピがありません。</div>
         )}
       </div>
     </div>
