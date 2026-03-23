@@ -9,19 +9,30 @@ interface RecipeEntry {
 
 export function Calculator() {
   const { recipes, ingredients } = useData();
+  const initialEntryId = Date.now().toString();
   const [entries, setEntries] = useState<RecipeEntry[]>([
-    { id: Date.now().toString(), recipeId: '', portions: 1 }
+    { id: initialEntryId, recipeId: '', portions: 1 }
   ]);
+  const [recipeSearchTerms, setRecipeSearchTerms] = useState<Record<string, string>>({
+    [initialEntryId]: ''
+  });
   const [isCalculated, setIsCalculated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
 
   const handleAddEntry = () => {
-    setEntries([...entries, { id: Date.now().toString(), recipeId: '', portions: 1 }]);
+    const newEntryId = Date.now().toString();
+    setEntries([...entries, { id: newEntryId, recipeId: '', portions: 1 }]);
+    setRecipeSearchTerms(prev => ({ ...prev, [newEntryId]: '' }));
     setIsCalculated(false);
   };
 
   const handleRemoveEntry = (id: string) => {
     setEntries(entries.filter(e => e.id !== id));
+    setRecipeSearchTerms(prev => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
     setIsCalculated(false);
   };
 
@@ -81,6 +92,14 @@ export function Calculator() {
       <div className="card" style={{ padding: 'var(--spacing-sm)' }}>
         {entries.map((entry, index) => (
           <div key={entry.id} className="calc-entry-row" style={{ borderBottom: index < entries.length - 1 ? '1px solid var(--color-border)' : 'none', paddingBottom: index < entries.length - 1 ? '0.4rem' : 0, marginBottom: index < entries.length - 1 ? '0.4rem' : 0 }}>
+            <input
+              type="text"
+              className="input-base"
+              value={recipeSearchTerms[entry.id] ?? ''}
+              onChange={(e) => setRecipeSearchTerms(prev => ({ ...prev, [entry.id]: e.target.value }))}
+              placeholder="レシピを絞り込み"
+              style={{ marginBottom: '0.25rem', fontSize: '0.8rem', padding: '0.25rem 0.35rem' }}
+            />
             <div className="flex gap-sm items-center" style={{ marginBottom: '0.25rem' }}>
               <span className="text-xs text-sub" style={{ minWidth: '1.5rem' }}>#{index + 1}</span>
               <select
@@ -90,9 +109,15 @@ export function Calculator() {
                 style={{ marginBottom: 0, fontSize: '0.8rem', padding: '0.25rem 0.35rem' }}
               >
                 <option value="">-- レシピを選択 --</option>
-                {recipes.map(r => (
+                {recipes
+                  .filter(r => {
+                    const term = (recipeSearchTerms[entry.id] ?? '').trim().toLowerCase();
+                    if (!term) return true;
+                    return r.name.toLowerCase().includes(term);
+                  })
+                  .map(r => (
                   <option key={r.id} value={r.id}>{r.name} ({r.basePortions})</option>
-                ))}
+                  ))}
               </select>
               <div className="flex items-center gap-sm" style={{ flexShrink: 0 }}>
                 <button
