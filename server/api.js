@@ -1,11 +1,18 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import cors from 'cors';
 
 const app = express();
 const prisma = new PrismaClient();
 const port = Number(process.env.API_PORT || 3001);
+const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map((value) => value.trim()).filter(Boolean);
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
+  })
+);
 
 function badRequest(res, message) {
   return res.status(400).json({ error: message });

@@ -20,8 +20,17 @@ import {
   type RecipeRow,
 } from '../data/recipeDb';
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+
+function apiUrl(path: string): string {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  return `${API_BASE_URL}${path}`;
+}
+
 async function apiRequest<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl(url), {
     headers: {
       'Content-Type': 'application/json',
       ...(init?.headers ?? {}),
@@ -83,7 +92,9 @@ export function useData() {
     const previousIngredients = ingredients;
     setIngredients(newIngredients);
 
-    if (!apiAvailable) return;
+    if (!apiAvailable) {
+      throw new Error('DB APIに接続できていないため保存できません。VITE_API_BASE_URLとAPIデプロイ先を確認してください。');
+    }
 
     try {
       const previousById = new Map(previousIngredients.map((item) => [item.id, item]));
@@ -118,7 +129,9 @@ export function useData() {
     const previousRecipes = recipes;
     setRecipes(newRecipes);
 
-    if (!apiAvailable) return;
+    if (!apiAvailable) {
+      throw new Error('DB APIに接続できていないため保存できません。VITE_API_BASE_URLとAPIデプロイ先を確認してください。');
+    }
 
     try {
       const previousById = new Map(previousRecipes.map((item) => [item.id, item]));

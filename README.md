@@ -32,10 +32,37 @@ npm run dev:full
 
 Viteの `/api` はAPIサーバーへプロキシされます。
 
+### デプロイ時にDB反映されない場合
+
+静的ホスティングにフロントだけをデプロイすると、`/api` が存在せずDB更新はできません。
+
+本番では次の2点が必要です。
+
+1. APIサーバー（`server/api.js`）を別途デプロイ
+2. フロントに `VITE_API_BASE_URL` を設定
+
+例:
+
+```env
+VITE_API_BASE_URL="https://your-api.example.com"
+```
+
+加えてAPI側では、フロントドメインを `CORS_ORIGIN` に設定してください。
+
 ## 技術スタック
 - React (Vite / TypeScript)
 - Vanilla CSS (Mobile First Design)
 - Local Storage (データ永続化 / PWA ready)
+
+## Tailwind CSS 調整環境
+
+このプロジェクトは Tailwind CSS を追加済みです。既存UIの崩れを避けるため、`tailwind.config.js` で `preflight: false` にしています。
+
+調整ポイント:
+- `tailwind.config.js`: テーマ拡張、プリセット、plugins
+- `src/index.css`: `@tailwind` ディレクティブと既存スタイル
+
+まずは開発サーバーを起動して、コンポーネントにTailwindクラスを追加して調整してください。
 
 ## Neon + Prisma セットアップ
 
