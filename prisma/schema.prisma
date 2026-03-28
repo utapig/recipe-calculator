@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum IngredientType {
+  normal
+  special
+}
+
+model Ingredient {
+  id           String             @id
+  name         String
+  type         IngredientType     @default(normal)
+  packageInfo  String?
+  notes        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  recipeLinks  RecipeIngredient[]
+}
+
+model Recipe {
+  id               String             @id
+  name             String
+  basePortions     Int
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  recipeIngredients RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipeId     String
+  ingredientId String
+  amountG      Decimal    @db.Decimal(12, 1)
+  sortOrder    Int        @default(0)
+  createdAt    DateTime   @default(now())
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([recipeId, sortOrder])
+  @@index([recipeId])
+  @@index([ingredientId])
+}

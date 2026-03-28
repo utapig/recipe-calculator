@@ -21,7 +21,56 @@
    npm run dev
    ```
 
+### DB連携でフロントとAPIを同時起動
+
+```bash
+npm run dev:full
+```
+
+- フロント: `http://localhost:5173`
+- API: `http://localhost:3001`
+
+Viteの `/api` はAPIサーバーへプロキシされます。
+
 ## 技術スタック
 - React (Vite / TypeScript)
 - Vanilla CSS (Mobile First Design)
 - Local Storage (データ永続化 / PWA ready)
+
+## Neon + Prisma セットアップ
+
+1. NeonでProjectを作成し、接続情報を取得
+2. `.env.example` をコピーして `.env` を作成
+3. `DATABASE_URL` にはNeonのPooler接続文字列、`DIRECT_URL` にはDirect接続文字列を設定
+4. Prisma Clientを生成
+
+```bash
+npm run prisma:generate
+```
+
+5. 初期スキーマをNeonへ反映
+
+```bash
+npm run prisma:push
+```
+
+6. Prisma Studioで内容確認（任意）
+
+```bash
+npm run prisma:studio
+```
+
+7. 初期データを投入（任意）
+
+```bash
+npm run prisma:seed
+```
+
+`prisma/seed.ts` は `src/data/ingredients.ts` と `src/data/recipes.ts` の初期データを、Neonの `Ingredient` / `Recipe` / `RecipeIngredient` に反映します。
+
+### 使うテーブル構成
+- `Ingredient`: 材料マスター
+- `Recipe`: レシピマスター
+- `RecipeIngredient`: レシピと材料の中間テーブル（分量 `amountG` と並び順 `sortOrder` を保持）
+
+Prismaスキーマは [prisma/schema.prisma](prisma/schema.prisma) にあります。

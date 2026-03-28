@@ -42,7 +42,7 @@ export function RecipeMaster() {
     setRecipeIngredients(updated);
   };
 
-  const handleSaveRecipe = (e: React.FormEvent) => {
+  const handleSaveRecipe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
@@ -58,7 +58,12 @@ export function RecipeMaster() {
       ingredients: validIngredients,
     };
 
-    saveRecipes([...recipes, newRecipe]);
+    try {
+      await saveRecipes([...recipes, newRecipe]);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'レシピの保存に失敗しました。');
+      return;
+    }
 
     // リセット
     setName('');
@@ -67,9 +72,13 @@ export function RecipeMaster() {
     setIsAdding(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('このレシピを削除してもよろしいですか？')) {
-      saveRecipes(recipes.filter(r => r.id !== id));
+      try {
+        await saveRecipes(recipes.filter(r => r.id !== id));
+      } catch (error) {
+        alert(error instanceof Error ? error.message : 'レシピの削除に失敗しました。');
+      }
     }
   };
 

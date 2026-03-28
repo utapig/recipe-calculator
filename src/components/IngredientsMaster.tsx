@@ -17,7 +17,7 @@ export function IngredientsMaster() {
     i.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
 
@@ -29,7 +29,12 @@ export function IngredientsMaster() {
       notes: newNotes.trim() || undefined,
     };
 
-    saveIngredients([...ingredients, newIngredient]);
+    try {
+      await saveIngredients([...ingredients, newIngredient]);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '材料の保存に失敗しました。');
+      return;
+    }
 
     // リセット
     setNewName('');
@@ -39,9 +44,13 @@ export function IngredientsMaster() {
     setIsAdding(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('この材料を削除してもよろしいですか？')) {
-      saveIngredients(ingredients.filter(i => i.id !== id));
+      try {
+        await saveIngredients(ingredients.filter(i => i.id !== id));
+      } catch (error) {
+        alert(error instanceof Error ? error.message : '材料の削除に失敗しました。');
+      }
     }
   };
 
