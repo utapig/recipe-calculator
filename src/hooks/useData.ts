@@ -22,34 +22,50 @@ import {
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
-function apiUrl(path: string): string {
+function apiUrlCandidates(path: string): string[] {
   if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path;
+    return [path];
   }
-  return `${API_BASE_URL}${path}`;
+
+  if (!API_BASE_URL) {
+    return [path];
+  }
+
+  return [`${API_BASE_URL}${path}`, path];
 }
 
 async function apiRequest<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(apiUrl(url), {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-    ...init,
-  });
+  const candidates = apiUrlCandidates(url);
+  let lastError: Error | null = null;
 
-  if (!response.ok) {
-    let message = `API request failed: ${response.status}`;
+  for (const candidateUrl of candidates) {
     try {
-      const body = (await response.json()) as { error?: string };
-      if (body?.error) message = body.error;
-    } catch {
-      // ignore JSON parsing errors and keep default message
+      const response = await fetch(candidateUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init?.headers ?? {}),
+        },
+        ...init,
+      });
+
+      if (!response.ok) {
+        let message = `API request failed: ${response.status}`;
+        try {
+          const body = (await response.json()) as { error?: string };
+          if (body?.error) message = body.error;
+        } catch {
+          // ignore JSON parsing errors and keep default message
+        }
+        throw new Error(message);
+      }
+
+      return response.json() as Promise<T>;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('API request failed');
     }
-    throw new Error(message);
   }
 
-  return response.json() as Promise<T>;
+  throw lastError ?? new Error('API request failed');
 }
 
 function recipeEquals(a: Recipe, b: Recipe): boolean {

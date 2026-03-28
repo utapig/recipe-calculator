@@ -49,6 +49,18 @@ VITE_API_BASE_URL="https://your-api.example.com"
 
 加えてAPI側では、フロントドメインを `CORS_ORIGIN` に設定してください。
 
+### Vercel同一プロジェクトで運用する場合
+
+このリポジトリには `api/` 配下に Vercel Functions を用意しています。
+
+- `https://<your-app>.vercel.app/api/health`
+- `https://<your-app>.vercel.app/api/recipes`
+- `https://<your-app>.vercel.app/api/ingredients`
+
+Vercelの環境変数に最低限 `DATABASE_URL`（必要なら `DIRECT_URL`）を設定して再デプロイしてください。
+
+`VITE_API_BASE_URL` は空でも動作します（同一ドメイン `/api` を利用）。
+
 ## 技術スタック
 - React (Vite / TypeScript)
 - Vanilla CSS (Mobile First Design)
