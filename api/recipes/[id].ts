@@ -1,4 +1,4 @@
-import { prisma } from '../_lib/prisma';
+import { prisma } from '../_lib/prisma.js';
 
 function methodNotAllowed(res: any) {
   return res.status(405).json({ error: 'Method not allowed' });
